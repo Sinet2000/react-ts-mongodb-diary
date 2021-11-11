@@ -4,6 +4,14 @@ export default {
   saltWorkFactor: 10,
   accessTokenTtl: "15m",
   refreshTokenTtl: "1y",
+  publicKey: `-----BEGIN PUBLIC KEY-----
+  AAAAB3NzaC1yc2EAAAADAQABAAABAQCdZu7BfxeHlOabvbeWR7C9GoVGpqCYIduA
+  9+Z4GLElAlyQuAjlH1DvfnHT8DS+wFbhAauEIIf9rT0aaGeYCkAiuk2wwv/eB2YY
+  qIf2NADEQxObmm3IMRD/Cpd7saF9YkWlJ6FQB5PQzoRVmWmrv7+VAeX6pluiCWl7
+  mFcvXE76yAd0au0hdjGB33lcLLJ1vfQAJf3lHv+DX5PFi1WvTz/AGQuDILcDpp+a
+  Wr0vx06OSjUllobLUu+q7rKQmj7oQ+4eHYeu3yZ4oVh+/9lJel4oJkC5lCMgQMym
+  eyt/Qyfm2eOSo1Pe6+4visIlT4kX2BySqx+Wbr8eEOoUUntYRFcT
+  -----END PUBLIC KEY-----`,
   privateKey: `-----BEGIN RSA PRIVATE KEY-----
   AAABAQCW0QjWGHuoKpEoCwk8kmaTWzT2dDQOcOqM0Xtf+XDK4E9nTx8ewvne8E4K
   3+76EvtrzxjTmgQTmgmhIwaX1MKNQ+urAbz+tiIqYFkeG8fcRdUk1Dx6hCEf7rsl
@@ -19,5 +27,5 @@ export default {
   AACAGE4xeecm7VBAmyuEbcb9KaIltkT9JCJatOR1xa6m9GKEUXb7hBY6EEv6s95a
   eqtragZcCuHyyhvggb52hm68mLYiYn/xUD7b8JVIKzGKy5E6l6ii4QCb9sY01Vye
   Vs9Ngk5rLWYTppdIlBfWes6jWDT/FoBn+X4V873p+LkQ4po=
-  -----END CERTIFICATE-----`
+  -----END RSA PRIVATE KEY----`
 };

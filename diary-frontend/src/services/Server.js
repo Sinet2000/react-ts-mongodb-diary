@@ -2,7 +2,7 @@ import axios from "axios";
 import User from "./User";
 
 const server = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: 'http://localhost:5858/api',
 });
 
 server.interceptors.request.use(

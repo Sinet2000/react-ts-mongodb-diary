@@ -1,36 +1,15 @@
-import { LeanDocument, FilterQuery, UpdateQuery } from "mongoose";
+import { FilterQuery, UpdateQuery } from "mongoose";
 import config from "config";
 import { get } from "lodash";
-import { IUser } from "../models/user/user.types";
 import { sign, decode } from "../utils/jwt.utils";
 import { findUser } from "./user.service";
 import { SessionModel } from "../models/session/session.model";
 import { ISession } from "../models/session/session.types";
 
-export async function createSession(userId: string, userAgent: string) {
+export async function createSession(userId: any, userAgent: string) {
   const session = await SessionModel.create({ user: userId, userAgent });
 
   return session.toJSON();
-}
-
-export function createAccessToken({
-  user,
-  session,
-}: {
-  user:
-    | Omit<IUser, "password">
-    | LeanDocument<Omit<IUser, "password">>;
-  session:
-    | Omit<ISession, "password">
-    | LeanDocument<Omit<ISession, "password">>;
-}) {
-  // building and returning the new access token
-  const accessToken = sign(
-    { ...user, session: session._id },
-    { expiresIn: config.get("accessTokenTtl") } // is configured to 15min
-  );
-
-  return accessToken;
 }
 
 export async function reIssueAccesToken({
@@ -53,7 +32,10 @@ export async function reIssueAccesToken({
 
   if (!user) return false;
 
-  const accessToken = createAccessToken({ user, session });
+  const accessToken = sign(
+    { ...user, session: session._id },
+    { expiresIn: config.get("accessTokenTtl") } // 15 minutes
+  );
 
   return accessToken;
 }

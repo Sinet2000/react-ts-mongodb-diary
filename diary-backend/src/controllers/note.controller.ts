@@ -8,19 +8,31 @@ import {
   findAndUpdateNote,
   deleteNote 
 } from "../services/note.service";
+import { 
+  CreateNoteInput,
+  GetUserNotesInput,
+  UpdateNoteInput
+} from "../schemas/note.schema";
 
-export async function createNoteHandler(req: Request, res: Response) {
-  const userId = get(req, "user._id");
-  const body = req.body;
+export async function createNoteHandler(
+  req: Request<{}, {}, CreateNoteInput["body"]>,
+  res: Response
+  ) {
+    const userId = res.locals.user._id;
 
-  const note = await createNote({...body, user: userId});
-
-  return res.send(note);
+    const body = req.body;
+  
+    const product = await createNote({ ...body, user: userId });
+  
+    return res.send(product);
 }
 
-export async function updateNoteHandler(req: Request, res: Response) {
-  const userId = get(req, "user._id");
-  const noteId = get(req, "params.noteId");
+export async function updateNoteHandler(
+  req: Request<UpdateNoteInput["params"]>,
+  res: Response
+  ) {
+  const userId = res.locals.user._id;
+  const noteId = req.params.noteId;
   const newNote = req.body;
 
   const note = await findNote({ noteId });
@@ -33,13 +45,18 @@ export async function updateNoteHandler(req: Request, res: Response) {
     return res.sendStatus(401);
   }
 
-  const updatedNote = await findAndUpdateNote({ noteId }, newNote, { new: true });
+  const updatedNote = await findAndUpdateNote({ noteId }, newNote, { 
+    new: true 
+  });
 
   return res.send(updatedNote);
 }
 
-export async function getNoteHandler(req: Request, res: Response) {
-  const noteId = get(req, "params.noteId");
+export async function getNoteHandler(
+  req: Request<UpdateNoteInput["params"]>,
+  res: Response
+) {
+  const noteId = req.params.noteId;
   const note = await findNote({ noteId });
 
   if (!note) {
@@ -49,8 +66,11 @@ export async function getNoteHandler(req: Request, res: Response) {
   return res.send(note);
 }
 
-export async function getAllUserNotes(req: Request, res: Response) {
-  const userId = get(req, "user._id");
+export async function getAllUserNotesHandler(
+  req: Request<GetUserNotesInput["params"]>,
+  res: Response
+  ) {
+  const userId = req.params.userId;
 
   await UserModel.findOne({
     userId
@@ -70,9 +90,12 @@ export async function getAllUserNotes(req: Request, res: Response) {
   })
 }
 
-export async function deleteNoteHandler(req: Request, res: Response) {
-  const userId = get(req, "user._id");
-  const noteId = get(req, "params.noteId");
+export async function deleteNoteHandler(
+  req: Request<UpdateNoteInput["params"]>,
+  res: Response
+) {
+  const userId = res.locals.user._id;
+  const noteId = req.params.noteId;
 
   const note = await findNote({ noteId });
 

@@ -1,25 +1,39 @@
-import express, { Application } from "express";
-import cors from "cors";
-import authRoutes from "./routes/auth"
-import noteRoutes from "./routes/note";
-import connect from "./connect";
+import { Request, Response } from "express";
+import connect from "./utils/connect";
 import config from "config";
+import logger from "./utils/logger";
+import responseTime from "response-time";
+import { restResponseTimeHistogram, startMetricsServer } from "./utils/metrics";
+import deserializeUser from "./middleware/deserializeUser";
+import swaggerDocs from "./utils/swagger";
+import createserver from "./utils/server";
 
 const PORT = config.get("port") as number;
 const db = config.get("dbConnString") as string
 
-const app: Application = express();
+const app = createserver();
 
-app.use(cors());
+app.use(
+  responseTime((req: Request, res: Response, time: number) => {
+    if (req?.route?.path) {
+      restResponseTimeHistogram.observe(
+        {
+          method: req.method,
+          route: req.route.path,
+          status_code: res.statusCode,
+        },
+        time * 1000
+      );
+    }
+  })
+);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false })); 
+app.listen(PORT, async () => {
+  logger.info(`App is running at http://localhost:${PORT}`);
 
-authRoutes({app});
-noteRoutes({app});
+  await connect({db});
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+  startMetricsServer();
 
-  connect({db});
+  swaggerDocs(app, PORT);
 });

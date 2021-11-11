@@ -9,23 +9,23 @@ const AllNotes = () => {
   const [message, setMessage] = useState(false);
 
   const user = User.getCurrentUser();
-  const username = user.username;
+  const userId = user._id;
 
   useEffect(() => {
     server
-      .get(`/${username}/notes`)
+      .get(`/notes/${userId}`)
       .then(response => {
         setNotes(response.data);
         if (!response.data.length) {
           setMessage(true);
         }
       })
-  }, [username]);
+  }, [userId]);
 
   return (
     <div className="container mt-3">
       <h1 className="title">All Notes</h1>
-      <Link to={`/${username}/add`} className="navbar-item">
+      <Link to={`/notes/create`} className="navbar-item">
         <span className="icon is-small mr-1">
           <i className="fas fa-file-medical"></i>
         </span>

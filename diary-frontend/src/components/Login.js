@@ -5,6 +5,7 @@ import User from "../services/User";
 const Login = ({ setCurrentUser }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   const [message, setMessage] = useState("");
 
@@ -18,16 +19,20 @@ const Login = ({ setCurrentUser }) => {
     const password = e.target.value;
     setPassword(password);
   };
+  const onChangePasswordConfirmation = (e) => {
+    const repeatedPassword = e.target.value;
+    setPasswordConfirmation(repeatedPassword);
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
 
     User
-      .login(username, password)
+      .login(username, password, passwordConfirmation)
       .then(() => {
           const user = User.getCurrentUser();
           setCurrentUser(user);
-          history.push(`/${username}/notes`);
+          history.push(`/notes/${user._id}`);
         },
         (error) => {
           const resMessage =
@@ -85,6 +90,24 @@ const Login = ({ setCurrentUser }) => {
                   placeholder="Password"
                   value={password}
                   onChange={onChangePassword}
+                  required
+                />
+                <span className="icon is-small is-left">
+                  <i className="fas fa-lock"></i>
+                </span>
+              </div>
+            </div>
+
+            <div className="field">
+              <label className="label">Confirm password</label>
+              <div className="control has-icons-left">
+                <input
+                  className="input"
+                  name="password"
+                  type="password"
+                  placeholder="Repeated Password"
+                  value={password}
+                  onChange={onChangePasswordConfirmation}
                   required
                 />
                 <span className="icon is-small is-left">

@@ -1,21 +1,46 @@
 import {
-  DocumentDefinition,
   FilterQuery,
   UpdateQuery,
   QueryOptions,
 } from "mongoose";
 import { NoteModel } from "../models/note/note.model";
-import { INote } from "../models/note/note.types";
+import { INote, INoteInput } from "../models/note/note.types";
+import { databaseResponseTimeHistogram } from "../utils/metrics";
 
-export function createNote(note: DocumentDefinition<INote>) {
-  return NoteModel.create(note);
+export async function createNote(note: INoteInput) {
+  const metricsLabels = {
+    operation: "createProduct",
+  };
+
+  const timer = databaseResponseTimeHistogram.startTimer();
+  try {
+    const result = await NoteModel.create(note);
+    timer({ ...metricsLabels, success: "true" });
+    return result;
+  } catch (e) {
+    timer({ ...metricsLabels, success: "false" });
+    throw e;
+  }
 }
 
-export function findNote(
+export async function findNote(
   query: FilterQuery<INote>,
   options: QueryOptions = { lean: true }
 ) {
-  return NoteModel.findOne(query, {}, options);
+  const metricsLabels = {
+    operation: "findProduct",
+  };
+
+  const timer = databaseResponseTimeHistogram.startTimer();
+  try {
+    const result = await NoteModel.findOne(query, {}, options);
+    timer({ ...metricsLabels, success: "true" });
+    return result;
+  } catch (e) {
+    timer({ ...metricsLabels, success: "false" });
+
+    throw e;
+  }
 }
 
 export function findAndUpdateNote(

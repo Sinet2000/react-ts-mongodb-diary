@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import { Link } from "react-router-dom";
-import User from "../services/User";
 import server from "../services/Server"
 
 import ReactMde from "react-mde";
@@ -15,17 +14,14 @@ const converter = new Showdown.Converter({
 });
 
 const Note = ({ note, notes, setNotes }) => {
-  const date = new Date(note.date).toDateString();
-  const time = new Date(note.date).toLocaleTimeString();
+  const date = new Date(note.updatedAt).toDateString();
+  const time = new Date(note.updatedAt).toLocaleTimeString();
 
   const [showModal, setShowModal] = useState(false);
 
-  const user = User.getCurrentUser();
-  const username = user.username;
-
   const deleteNote = (id) => {
     server
-      .delete(`/${username}/remove/${id}`)
+      .delete(`/notes/remove/${id}`)
       .then(() => {
         setNotes(notes.filter(note => note._id !== id));
       })
@@ -51,7 +47,7 @@ const Note = ({ note, notes, setNotes }) => {
           </span>
           Preview
         </a>
-        <Link to={`/${username}/edit/${note._id}`} className="card-footer-item has-text-primary-dark">
+        <Link to={`/notes/edit/${note._id}`} className="card-footer-item has-text-primary-dark">
           <span className="icon is-small mx-2">
             <i className="fas fa-pen"></i>
           </span>

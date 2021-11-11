@@ -4,7 +4,7 @@ import { IUser } from "./user.types";
 import config from "config";
 
 const UserSchema: Schema = new Schema({
-  username: { type: String, required: true },
+  username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true}
 }, {
@@ -14,7 +14,9 @@ const UserSchema: Schema = new Schema({
 UserSchema.pre("save", async function (next: any ) {
   let user = this as IUser;
 
-  if (!user.isModified("password")) return next;
+  if (!user.isModified("password")){
+    return next;
+  }
 
   const salt = await bcrypt.genSalt(config.get("saltWorkFactor"));
   
@@ -27,7 +29,7 @@ UserSchema.pre("save", async function (next: any ) {
 
 UserSchema.methods.comparePassword = async function (
   passwordProvided: string
-) {
+): Promise<boolean> {
   const user = this as IUser;
 
   return bcrypt.compare(passwordProvided, user.password).catch((e) => false);

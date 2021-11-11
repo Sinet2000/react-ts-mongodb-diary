@@ -1,10 +1,13 @@
 import { Document } from "mongoose";
 
-export interface IUser extends Document {
-  username: string;
-  email: string;
-  password: string;
+export interface IUser extends IUserInput, Document {
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
+}
+
+export interface IUserInput {
+  email: string;
+  username: string;
+  password: string;
 }

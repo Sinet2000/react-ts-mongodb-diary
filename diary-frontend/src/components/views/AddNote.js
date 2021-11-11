@@ -19,7 +19,7 @@ const AddNote = ({ history }) => {
   const [selectedTab, setSelectedTab] = useState("write");
 
   const user = User.getCurrentUser();
-  const username = user.username;
+  const userId = user._id;
 
   const addNote = () => {
     const data = {
@@ -28,9 +28,9 @@ const AddNote = ({ history }) => {
     }
 
     server
-      .post(`/${username}/add`, data)
+      .post(`/create`, data)
       .then(() => {
-        history.push(`/${username}/notes`)
+        history.push(`/notes/${userId}`)
       })
   };
 

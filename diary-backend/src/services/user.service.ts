@@ -1,13 +1,15 @@
-import { DocumentDefinition, FilterQuery } from "mongoose";
+import { FilterQuery } from "mongoose";
 import { omit } from "lodash";
 import { UserModel } from "../models/user/user.model";
-import { IUser } from "../models/user/user.types";
+import { IUserInput, IUser } from "../models/user/user.types";
 
-export async function createUser(input: DocumentDefinition<IUser>) {
+export async function createUser(input: IUserInput) {
   try {
-    return await UserModel.create(input);
-  } catch (error) {
-    throw new Error(error);
+    const user = await UserModel.create(input);
+
+    return omit(user.toJSON(), "password");
+  } catch (e: any) {
+    throw new Error(e);
   }
 }
 
@@ -17,9 +19,9 @@ export async function findUser(query: FilterQuery<IUser>) {
 
 export async function validatePassword({
   username,
-  password
+  password,
 }: {
-  username: IUser["username"];
+  username: string;
   password: string;
 }) {
   const user = await UserModel.findOne({ username });
@@ -28,11 +30,9 @@ export async function validatePassword({
     return false;
   }
 
-  const isValidPass = await user.comparePassword(password);
+  const isValid = await user.comparePassword(password);
 
-  if (!isValidPass) {
-    return false;
-  }
+  if (!isValid) return false;
 
   return omit(user.toJSON(), "password");
 }

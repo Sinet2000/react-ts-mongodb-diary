@@ -1,40 +1,64 @@
 import { Request, Response } from "express";
-import { requireUser, validateRequest } from "../middleware";
+import requireUser from "../middleware/requireUser";
+import validateResource  from "../middleware/validateResource";
 import { 
   createNoteHandler,
   updateNoteHandler,
   getNoteHandler,
   deleteNoteHandler,
-  getAllUserNotes,
+  getAllUserNotesHandler,
  } from "../controllers/note.controller";
 import { TRoutesInput } from "./types/routes";
-import { createNoteSchema, deleteNoteSchema, updateNoteSchema } from "../schemas/note.schema";
+import { createNoteSchema, deleteNoteSchema, getNoteSchema, getUserNotesSchema, updateNoteSchema } from "../schemas/note.schema";
 
 export default ({ app }: TRoutesInput) => {
-  // create a note
   app.post(
     "/api/notes/create",
-    [requireUser, validateRequest(createNoteSchema)],
+    [requireUser, validateResource(createNoteSchema)],
     createNoteHandler
   );
-
-  // update a note
+  
+   /**
+   * @openapi
+   * '/api/notes/edit/{noteId}':
+   *  get:
+   *     tags:
+   *     - Notes
+   *     summary: Get a single note by the noteId
+   *     parameters:
+   *      - name: noteId
+   *        in: path
+   *        description: The id of the note
+   *        required: true
+   *     responses:
+   *       200:
+   *         description: Success
+   *         content:
+   *          application/json:
+   *           schema:
+   *              $ref: '#/components/schema/Note'
+   *       404:
+   *         description: Note not found
+   */
   app.put(
     "/api/notes/edit/:noteId",
-    [requireUser, validateRequest(updateNoteSchema)],
+    [requireUser, validateResource(updateNoteSchema)],
     updateNoteHandler
   );
 
   // get a note
-  app.get("/api/note/:noteId", getNoteHandler);
+  app.get("/api/note/:noteId", validateResource(getNoteSchema));
 
   // get user notes
-  app.get("/pai/notes/:userId", getAllUserNotes);
+  app.get("/api/notes/:userId", 
+    [requireUser, validateResource(getUserNotesSchema)],
+    getAllUserNotesHandler
+  );
 
   // delete a note
   app.delete(
     "/api/notes/remove/:noteId",
-    [requireUser, validateRequest(deleteNoteSchema)],
+    [requireUser, validateResource(deleteNoteSchema)],
     deleteNoteHandler
   );
 };

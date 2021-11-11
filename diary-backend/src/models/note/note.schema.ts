@@ -1,12 +1,14 @@
 import { Schema } from "mongoose";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
+
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
 
 const NoteSchema: Schema = new Schema({
   postId: {
     type: String,
     required: true,
     unique: true,
-    default: () => nanoid(10),
+    default: () => `note_${nanoid()}`
   },
   user: { type: Schema.Types.ObjectId, ref: "User" },
   title: { type: String, default: true},

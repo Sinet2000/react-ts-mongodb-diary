@@ -20,9 +20,7 @@ const deserializeUser = async (
   const{ decoded, expired } = decode(accessToken);
 
   if (decoded) {
-    // @ts-ignore
-    req.user = decoded;
-
+    res.locals.user = decoded;
     return next();
   }
 
@@ -31,12 +29,12 @@ const deserializeUser = async (
 
     if (newAccessToken) {
       res.setHeader("x-access-token", newAccessToken);
-
-      const { decoded } = decode(newAccessToken);
-
-      // @ts-ignore
-      req.user = decoded;
     }
+
+    const result = decode(newAccessToken as string);
+
+    res.locals.user = result.decoded;
+    return next();
 
     return next();
   }

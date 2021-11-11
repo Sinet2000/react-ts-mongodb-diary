@@ -19,17 +19,17 @@ const EditNote = ({ match, history }) => {
   const [selectedTab, setSelectedTab] = useState("write");
 
   const user = User.getCurrentUser();
-  const username = user.username;
+  const userId = user._id;
   const id = match.params.id;
 
   useEffect(() => {
     server
-      .get(`/${username}/note/${id}`)
+      .get(`/notes/${userId}`)
       .then(response => {
         setTitle(response.data.title);
         setContent(response.data.content);
       })
-  },[username, id]);
+  },[userId, id]);
 
   const editNote = () => {
     const data = {
@@ -38,9 +38,9 @@ const EditNote = ({ match, history }) => {
     }
 
     server
-      .put(`/${username}/edit/${id}`, data)
+      .put(`/notes/edit/${userId}`, data)
       .then(() => {
-        history.push(`/${username}/notes`);
+        history.push(`/notes/${userId}`);
       });
   };
 
