@@ -19,7 +19,7 @@ export const testNoteData = {
 const testUserData = {
   _id: userId,
   email: "nikita.nikitin@gmail.com",
-  usernane: "justAUser",
+  username: "justAUser",
 };
 
 describe("note", () => {
@@ -39,7 +39,7 @@ describe("note", () => {
       it("should return a 404", async () => {
         const noteId = "note-111";
 
-        await supertest(app).get(`/api/note/${noteId}`).expect(404);
+        await supertest(app).get(`/api/notes/${noteId}`).expect(404);
       });
     });
 
@@ -49,7 +49,7 @@ describe("note", () => {
         const note = await createNote(testNoteData);
 
         const { body, statusCode } = await supertest(app).get(
-          `/api/note/${note.noteId}`
+          `/api/notes/${note.noteId}`
         );
 
         expect(statusCode).toBe(200);

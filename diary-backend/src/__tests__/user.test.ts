@@ -12,12 +12,12 @@ const userId = new mongoose.Types.ObjectId().toString();
 const testUserData = {
   _id: userId,
   email: "nikita.nikitin@gmail.com",
-  usernane: "justAUser",
+  username: "justAUser",
 };
 
 const userTestInput = {
-  email: "nikita.nikitin@gmail.com",
-  usernane: "justAUser",
+  email: "test@example.com",
+  username: "justAUser",
   password: "Password123",
   passwordConfirmation: "Password123",
 };
@@ -41,7 +41,7 @@ describe("user", () => {
         const createUserServiceMock = jest
           .spyOn(UserService, "createUser")
           // @ts-ignore
-          .mockReturnValueOnce(userPayload);
+          .mockReturnValueOnce(userTestInput);
 
         const { statusCode, body } = await supertest(app)
           .post("/api/signup")
@@ -60,7 +60,7 @@ describe("user", () => {
         const createUserServiceMock = jest
           .spyOn(UserService, "createUser")
           // @ts-ignore
-          .mockReturnValueOnce(userPayload);
+          .mockReturnValueOnce(userTestInput);
 
         const { statusCode } = await supertest(app)
           .post("/api/signup")
@@ -95,7 +95,7 @@ describe("user", () => {
         jest
           .spyOn(UserService, "validatePassword")
           // @ts-ignore
-          .mockReturnValue(userPayload);
+          .mockReturnValue(userTestInput);
 
         jest
           .spyOn(SessionService, "createSession")
@@ -107,7 +107,7 @@ describe("user", () => {
             return "a user agent";
           },
           body: {
-            email: "test@example.com",
+            username: "justAUser",
             password: "Password123",
           },
         };
