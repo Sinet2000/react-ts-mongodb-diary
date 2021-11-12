@@ -2,19 +2,23 @@ import {
   FilterQuery,
   UpdateQuery,
   QueryOptions,
+  DocumentDefinition,
 } from "mongoose";
 import { NoteModel } from "../models/note/note.model";
 import { INote, INoteInput } from "../models/note/note.types";
 import { databaseResponseTimeHistogram } from "../utils/metrics";
 
-export async function createNote(note: INoteInput) {
+export async function createNote(
+  input: DocumentDefinition<
+    Omit<INote, "createdAt" | "updatedAt" | "noteId">
+>) {
   const metricsLabels = {
     operation: "createProduct",
   };
 
   const timer = databaseResponseTimeHistogram.startTimer();
   try {
-    const result = await NoteModel.create(note);
+    const result = await NoteModel.create(input);
     timer({ ...metricsLabels, success: "true" });
     return result;
   } catch (e) {

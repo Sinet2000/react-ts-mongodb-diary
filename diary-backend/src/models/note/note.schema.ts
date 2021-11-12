@@ -4,7 +4,7 @@ import { customAlphabet } from "nanoid";
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 10);
 
 const NoteSchema: Schema = new Schema({
-  postId: {
+  noteId: {
     type: String,
     required: true,
     unique: true,

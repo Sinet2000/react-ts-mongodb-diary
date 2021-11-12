@@ -1,4 +1,4 @@
-import { object, number, string, TypeOf } from "zod";
+import { object, string, TypeOf } from "zod";
 
 /**
  * @openapi

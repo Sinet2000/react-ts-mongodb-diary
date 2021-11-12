@@ -3,6 +3,7 @@ import { IUser } from "../user/user.types";
 
 export interface INoteInput {
   user: IUser["_id"];
+  noteId: string;
   title: string;
   content: string;
 }

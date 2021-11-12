@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { get } from "lodash";
 import { NoteModel } from "../models/note/note.model";
 import { UserModel } from "../models/user/user.model";
 import { 
