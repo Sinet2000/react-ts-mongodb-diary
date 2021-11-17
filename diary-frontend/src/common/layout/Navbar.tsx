@@ -1,15 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import User from "./services/User";
-import Home from "./components/Home";
-import Register from "./components/Register";
-import Login from "./components/Login";
-import AllNotes from "./components/views/AllNotes";
-import AddNote from "./components/views/AddNote";
-import EditNote from "./components/views/EditNote";
-import "./App.css";
+import { Routes } from "../../app/routes";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-function App() {
+export const Navbar = () => {
   const [currentUser, setCurrentUser] = useState(undefined);
 
   useEffect(() => {
@@ -18,15 +11,9 @@ function App() {
       setCurrentUser(user);
     }
   }, []);
-
-  const logOut = () => {
-    User.logout();
-    setCurrentUser(null);
-  };
-
+  
   return (
-    <Router>
-      <div>
+    <div>
         <nav className="navbar is-dark">
           <div className="navbar-brand">
             <div className="navbar-item">
@@ -74,21 +61,6 @@ function App() {
           )}
 
         </nav>
-
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/login">
-            <Login setCurrentUser={setCurrentUser} />
-          </Route>
-          <Route path="/:username/notes" component={AllNotes} />
-          <Route path="/:username/add" component={AddNote} />
-          <Route path="/:username/edit/:id" component={EditNote} />
-        </Switch>
-
       </div>
-    </Router>
   );
-}
-
-export default App;
+};

@@ -47,7 +47,10 @@ export default ({ app }: TRoutesInput) => {
   );
 
   // get a note
-  app.get("/api/notes/:noteId", validateResource(getNoteSchema));
+  app.get("/api/notes/:noteId",
+  validateResource(getNoteSchema),
+  getNoteHandler
+  );
 
   // get user notes
   app.get("/api/notes/:userId", 

@@ -9,14 +9,14 @@ const app = createServer();
 
 const userId = new mongoose.Types.ObjectId().toString();
 
-export const testNoteData = {
+export const notePayload  = {
   user: userId,
   title: "Diary Studies: Understanding Long-Term User Behavior and Experiences",
   content:
     "Summary: User logs (diaries) of daily activities as they occur give contextual insights about real-time user behaviors and needs, helping define UX feature requirements."
 };
 
-const testUserData = {
+const userPayload  = {
   _id: userId,
   email: "nikita.nikitin@gmail.com",
   username: "justAUser",
@@ -46,7 +46,7 @@ describe("note", () => {
     describe("given the note does exist", () => {
       it("should return a 200 status and the note", async () => {
         // @ts-ignore
-        const note = await createNote(testNoteData);
+        const note = await createNote(notePayload);
 
         const { body, statusCode } = await supertest(app).get(
           `/api/notes/${note.noteId}`
@@ -70,12 +70,12 @@ describe("note", () => {
 
     describe("given the user is logged in", () => {
       it("should return a 200 and create the note", async () => {
-        const jwt = sign(testUserData);
+        const jwt = sign(userPayload);
 
         const { statusCode, body } = await supertest(app)
           .post("/api/notes/create")
           .set("Authorization", `Bearer ${jwt}`)
-          .send(testNoteData);
+          .send(notePayload);
 
         expect(statusCode).toBe(200);
 

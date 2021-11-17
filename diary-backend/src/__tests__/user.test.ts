@@ -9,20 +9,20 @@ const app = createServer();
 
 const userId = new mongoose.Types.ObjectId().toString();
 
-const testUserData = {
+const userPayload  = {
   _id: userId,
   email: "nikita.nikitin@gmail.com",
   username: "justAUser",
 };
 
-const userTestInput = {
+const userInput  = {
   email: "test@example.com",
   username: "justAUser",
   password: "Password123",
   passwordConfirmation: "Password123",
 };
 
-const testSessionData = {
+const sessionPayload  = {
   _id: new mongoose.Types.ObjectId().toString(),
   user: userId,
   valid: true,
@@ -41,17 +41,17 @@ describe("user", () => {
         const createUserServiceMock = jest
           .spyOn(UserService, "createUser")
           // @ts-ignore
-          .mockReturnValueOnce(userTestInput);
+          .mockReturnValueOnce(userPayload);
 
         const { statusCode, body } = await supertest(app)
           .post("/api/signup")
-          .send(userTestInput);
+          .send(userInput);
 
         expect(statusCode).toBe(200);
 
-        expect(body).toEqual(testUserData);
+        expect(body).toEqual(userPayload);
 
-        expect(createUserServiceMock).toHaveBeenCalledWith(userTestInput);
+        expect(createUserServiceMock).toHaveBeenCalledWith(userInput);
       });
     });
 
@@ -60,11 +60,11 @@ describe("user", () => {
         const createUserServiceMock = jest
           .spyOn(UserService, "createUser")
           // @ts-ignore
-          .mockReturnValueOnce(userTestInput);
+          .mockReturnValueOnce(userPayload);
 
         const { statusCode } = await supertest(app)
           .post("/api/signup")
-          .send({ ...userTestInput, passwordConfirmation: "doesnotmatch" });
+          .send({ ...userInput, passwordConfirmation: "doesnotmatch" });
 
         expect(statusCode).toBe(400);
 
@@ -80,7 +80,7 @@ describe("user", () => {
 
         const { statusCode } = await supertest(createServer())
           .post("/api/signup")
-          .send(userTestInput);
+          .send(userInput);
 
         expect(statusCode).toBe(409);
 
@@ -95,7 +95,7 @@ describe("user", () => {
         jest
           .spyOn(UserService, "validatePassword")
           // @ts-ignore
-          .mockReturnValue(userTestInput);
+          .mockReturnValue(userPayload);
 
         jest
           .spyOn(SessionService, "createSession")
