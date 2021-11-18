@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 import supertest from "supertest";
 import createServer from "../utils/server";
-import * as UserService from "../services/user.service";
-import * as SessionService from "../services/session.service";
-import { createUserSessionHandler } from "../controllers/session.controller";
+import { UserService, SessionService } from "../services/";
+import { SessionController } from "../controllers/";
 
 const app = createServer();
 
@@ -119,7 +118,7 @@ describe("user", () => {
         };
 
         // @ts-ignore
-        await createUserSessionHandler(req, res);
+        await SessionController.createUserSessionHandler(req, res);
 
         expect(send).toHaveBeenCalledWith({
           accessToken: expect.any(String),

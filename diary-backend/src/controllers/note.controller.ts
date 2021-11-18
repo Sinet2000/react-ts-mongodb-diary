@@ -1,19 +1,10 @@
 import { Request, Response } from "express";
-import { NoteModel } from "../models/note/note.model";
-import { UserModel } from "../models/user/user.model";
-import { 
-  createNote,
-  findNote,
-  findAndUpdateNote,
-  deleteNote 
-} from "../services/note.service";
-import { 
-  CreateNoteInput,
-  GetUserNotesInput,
-  UpdateNoteInput
-} from "../schemas/note.schema";
+import NoteModel from "../models/note.model";
+import UserModel from "../models/user.model";
+import { CreateNoteInput, UpdateNoteInput } from "../routes/shema-managers/note.schema";
+import { NoteService } from "../services";
 
-export async function createNoteHandler(
+async function createNoteHandler(
   req: Request<{}, {}, CreateNoteInput["body"]>,
   res: Response
   ) {
@@ -21,12 +12,12 @@ export async function createNoteHandler(
 
     const body = req.body;
   
-    const product = await createNote({ ...body, user: userId });
+    const note = await NoteService.createNote({ ...body, user: userId });
   
-    return res.send(product);
+    return res.send(note);
 }
 
-export async function updateNoteHandler(
+async function updateNoteHandler(
   req: Request<UpdateNoteInput["params"]>,
   res: Response
   ) {
@@ -34,7 +25,7 @@ export async function updateNoteHandler(
   const noteId = req.params.noteId;
   const newNote = req.body;
 
-  const note = await findNote({ noteId });
+  const note = await NoteService.findNote({ noteId });
 
   if (!note) {
     return res.sendStatus(404);
@@ -44,19 +35,19 @@ export async function updateNoteHandler(
     return res.sendStatus(401);
   }
 
-  const updatedNote = await findAndUpdateNote({ noteId }, newNote, { 
+  const updatedNote = await NoteService.findAndUpdateNote({ noteId }, newNote, { 
     new: true 
   });
 
   return res.send(updatedNote);
 }
 
-export async function getNoteHandler(
+async function getNoteHandler(
   req: Request<UpdateNoteInput["params"]>,
   res: Response
 ) {
   const noteId = req.params.noteId;
-  const note = await findNote({ noteId });
+  const note = await NoteService.findNote({ noteId });
 
   if (!note) {
     return res.sendStatus(404);
@@ -65,38 +56,38 @@ export async function getNoteHandler(
   return res.send(note);
 }
 
-export async function getAllUserNotesHandler(
-  req: Request<GetUserNotesInput["params"]>,
+async function getAllUserNotesHandler(
+  req: Request,
   res: Response
   ) {
-  const userId = req.params.userId;
+    const userId = res.locals.user._id;
 
-  await UserModel.findOne({
-    userId
-  }).exec((err, user) => {
-    NoteModel
-      .find({ userId})
-      .sort({ createdAt: -1 })
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while fetching notes."
+    await UserModel.findOne({
+      userId
+    }).exec((err, user) => {
+      NoteModel
+        .find({ userId })
+        .sort({ createdAt: -1 })
+        .then(data => {
+          res.send(data);
+        })
+        .catch(err => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while fetching notes."
+          });
         });
-      });
-  })
+    })
 }
 
-export async function deleteNoteHandler(
+async function deleteNoteHandler(
   req: Request<UpdateNoteInput["params"]>,
   res: Response
 ) {
   const userId = res.locals.user._id;
   const noteId = req.params.noteId;
 
-  const note = await findNote({ noteId });
+  const note = await NoteService.findNote({ noteId });
 
   if (!note) {
     return res.sendStatus(404);
@@ -106,7 +97,15 @@ export async function deleteNoteHandler(
     return res.sendStatus(401);
   }
 
-  await deleteNote({ noteId });
+  await NoteService.deleteNote({ noteId });
 
   return res.sendStatus(200);
 }
+
+export const NoteController = {
+  createNoteHandler,
+  updateNoteHandler,
+  getNoteHandler,
+  getAllUserNotesHandler,
+  deleteNoteHandler
+};

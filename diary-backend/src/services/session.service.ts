@@ -2,17 +2,16 @@ import { FilterQuery, UpdateQuery } from "mongoose";
 import config from "config";
 import { get } from "lodash";
 import { sign, decode } from "../utils/jwt.utils";
-import { findUser } from "./user.service";
-import { SessionModel } from "../models/session/session.model";
-import { ISession } from "../models/session/session.types";
+import { UserService } from ".";
+import SessionModel, { SessionDocument } from "../models/session.model";
 
-export async function createSession(userId: any, userAgent: string) {
+async function createSession(userId: any, userAgent: string) {
   const session = await SessionModel.create({ user: userId, userAgent });
 
   return session.toJSON();
 }
 
-export async function reIssueAccesToken({
+async function reIssueAccesToken({
   refreshToken
 }: {
   refreshToken: string
@@ -28,7 +27,7 @@ export async function reIssueAccesToken({
   // validating session  (is it still valid?)
   if (!session || !session?.valid) return false;
 
-  const user = await findUser({ _id: session.user });
+  const user = await UserService.findUser({ _id: session.user });
 
   if (!user) return false;
 
@@ -40,13 +39,20 @@ export async function reIssueAccesToken({
   return accessToken;
 }
 
-export async function updateSession(
-  query: FilterQuery<ISession>,
-  update: UpdateQuery<ISession>
+async function updateSession(
+  query: FilterQuery<SessionDocument>,
+  update: UpdateQuery<SessionDocument>
 ) {
   return SessionModel.updateOne(query, update);
 }
 
-export async function findSessions(query: FilterQuery<ISession>) {
+async function findSessions(query: FilterQuery<SessionDocument>) {
   return SessionModel.find(query).lean();
+}
+
+export const SessionService = {
+  createSession,
+  reIssueAccesToken,
+  updateSession,
+  findSessions
 }

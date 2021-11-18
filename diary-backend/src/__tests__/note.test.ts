@@ -2,7 +2,7 @@ import supertest from "supertest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import createServer from "../utils/server";
 import mongoose from "mongoose";
-import { createNote } from "../services/note.service";
+import { NoteService } from "../services/";
 import { sign } from "../utils/jwt.utils";
 
 const app = createServer();
@@ -46,7 +46,7 @@ describe("note", () => {
     describe("given the note does exist", () => {
       it("should return a 200 status and the note", async () => {
         // @ts-ignore
-        const note = await createNote(notePayload);
+        const note = await NoteService.createNote(notePayload);
 
         const { body, statusCode } = await supertest(app).get(
           `/api/notes/${note.noteId}`
