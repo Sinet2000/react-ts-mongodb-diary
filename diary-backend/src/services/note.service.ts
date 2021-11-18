@@ -2,19 +2,22 @@ import {
   FilterQuery,
   UpdateQuery,
   QueryOptions,
+  DocumentDefinition,
 } from "mongoose";
-import { NoteModel } from "../models/note/note.model";
-import { INote, INoteInput } from "../models/note/note.types";
+import NoteModel, { NoteDocument } from "../models/note.model";
 import { databaseResponseTimeHistogram } from "../utils/metrics";
 
-export async function createNote(note: INoteInput) {
+async function createNote(
+  input: DocumentDefinition<
+    Omit<NoteDocument, "createdAt" | "updatedAt" | "noteId">
+>) {
   const metricsLabels = {
     operation: "createProduct",
   };
 
   const timer = databaseResponseTimeHistogram.startTimer();
   try {
-    const result = await NoteModel.create(note);
+    const result = await NoteModel.create(input);
     timer({ ...metricsLabels, success: "true" });
     return result;
   } catch (e) {
@@ -23,8 +26,8 @@ export async function createNote(note: INoteInput) {
   }
 }
 
-export async function findNote(
-  query: FilterQuery<INote>,
+async function findNote(
+  query: FilterQuery<NoteDocument>,
   options: QueryOptions = { lean: true }
 ) {
   const metricsLabels = {
@@ -43,14 +46,21 @@ export async function findNote(
   }
 }
 
-export function findAndUpdateNote(
-  query: FilterQuery<INote>,
-  update: UpdateQuery<INote>,
+function findAndUpdateNote(
+  query: FilterQuery<NoteDocument>,
+  update: UpdateQuery<NoteDocument>,
   options: QueryOptions
 ) {
   return NoteModel.findOneAndUpdate(query, update, options);
 }
 
-export function deleteNote(query: FilterQuery<INote>) {
+function deleteNote(query: FilterQuery<NoteDocument>) {
   return NoteModel.deleteOne(query);
+}
+
+export const NoteService = {
+  createNote,
+  findNote,
+  findAndUpdateNote,
+  deleteNote
 }

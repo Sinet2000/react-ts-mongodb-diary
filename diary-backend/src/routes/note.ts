@@ -1,21 +1,15 @@
 import { Request, Response } from "express";
 import requireUser from "../middleware/requireUser";
 import validateResource  from "../middleware/validateResource";
-import { 
-  createNoteHandler,
-  updateNoteHandler,
-  getNoteHandler,
-  deleteNoteHandler,
-  getAllUserNotesHandler,
- } from "../controllers/note.controller";
+import { NoteController } from "../controllers/";
 import { TRoutesInput } from "./types/routes";
-import { createNoteSchema, deleteNoteSchema, getNoteSchema, getUserNotesSchema, updateNoteSchema } from "../schemas/note.schema";
+import { NoteSchemaManager } from "./shema-managers/";
 
 export default ({ app }: TRoutesInput) => {
   app.post(
     "/api/notes/create",
-    [requireUser, validateResource(createNoteSchema)],
-    createNoteHandler
+    [requireUser, validateResource(NoteSchemaManager.createNoteSchema)],
+    NoteController.createNoteHandler
   );
   
    /**
@@ -42,23 +36,28 @@ export default ({ app }: TRoutesInput) => {
    */
   app.put(
     "/api/notes/edit/:noteId",
-    [requireUser, validateResource(updateNoteSchema)],
-    updateNoteHandler
+    [requireUser, validateResource(NoteSchemaManager.updateNoteSchema)],
+    NoteController.updateNoteHandler
   );
 
   // get a note
-  app.get("/api/note/:noteId", validateResource(getNoteSchema));
+  app.get(
+    "/api/notes/:noteId",
+    validateResource(NoteSchemaManager.getNoteSchema),
+    NoteController.getNoteHandler
+  );
 
   // get user notes
-  app.get("/api/notes/:userId", 
-    [requireUser, validateResource(getUserNotesSchema)],
-    getAllUserNotesHandler
+  app.get(
+    "/api/notes", 
+    [requireUser],
+    NoteController.getAllUserNotesHandler
   );
 
   // delete a note
   app.delete(
     "/api/notes/remove/:noteId",
-    [requireUser, validateResource(deleteNoteSchema)],
-    deleteNoteHandler
+    [requireUser, validateResource(NoteSchemaManager.deleteNoteSchema)],
+    NoteController.deleteNoteHandler
   );
 };

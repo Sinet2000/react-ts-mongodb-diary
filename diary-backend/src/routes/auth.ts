@@ -1,14 +1,8 @@
 import { Request, Response } from "express";
-import { createUserHandler } from "../controllers/user.controller";
-import { 
-  createUserSessionHandler,
-  deleteSessionHandler,
-  getUserSessionsHandler 
-} from "../controllers/session.controller";
+import { UserController, SessionController } from "../controllers";
 import requireUser from "../middleware/requireUser";
 import validateResource  from "../middleware/validateResource";
-import { createSessionSchema } from "../schemas/session.schema";
-import { createUserSchema } from "../schemas/user.schema";
+import { SessionSchemaManager, UserSchemaManager } from "./shema-managers";
 import { TRoutesInput } from "./types/routes";
 
 export default ({ app }: TRoutesInput) => {
@@ -58,19 +52,21 @@ export default ({ app }: TRoutesInput) => {
    *      400:
    *        description: Bad request
    */
-  app.post("/api/signup", validateResource(createUserSchema), createUserHandler);
+  app.post("/api/signup", validateResource(UserSchemaManager.createUserSchema), UserController.createUserHandler);
 
   // Login
   app.post(
     "/api/signin",
-    validateResource(createSessionSchema),
-    createUserSessionHandler
+    validateResource(SessionSchemaManager.createSessionSchema),
+    SessionController.createUserSessionHandler
   );
 
+  app.get('/api/curUser', requireUser, UserController.getCurrentUser);
+
    // Get the user's sessions
-   app.get("/api/sessions", requireUser, getUserSessionsHandler);
+   app.get("/api/sessions", requireUser, SessionController.getUserSessionsHandler);
 
    // Logout
-   app.delete("/api/logout", requireUser, deleteSessionHandler);
+   app.delete("/api/logout", requireUser, SessionController.deleteSessionHandler);
 
 };
