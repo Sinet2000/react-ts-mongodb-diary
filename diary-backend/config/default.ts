@@ -1,6 +1,6 @@
 export default {
   port: 5858,
-  dbConnString: "mongodb://localhost/personaldiary_db_new",
+  dbConnString: "mongodb://localhost/personal_diary_db1",
   saltWorkFactor: 10,
   accessTokenTtl: "15m",
   refreshTokenTtl: "1y",

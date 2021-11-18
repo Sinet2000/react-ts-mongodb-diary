@@ -1,0 +1,475 @@
+{
+	"info": {
+		"_postman_id": "5012ad18-a750-4c08-9ba1-3c0125a37f20",
+		"name": "React-types diary",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Session",
+			"item": [
+				{
+					"name": "Get User's Sessions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const newAccessToken = responseHeaders['x-access-token'];\r",
+									"\r",
+									"if (newAccessToken) {\r",
+									"    console.log('Set new access token');\r",
+									"    pm.environment.set(\"accessToken\", newAccessToken);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "key",
+								"value": "x-refresh",
+								"type": "text"
+							},
+							{
+								"key": "value",
+								"value": "{{refreshToken}}",
+								"type": "text"
+							},
+							{
+								"key": "type",
+								"value": "text",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{diary_local_http}}/sessions",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"sessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"username\": \"{{username}}\",\r\n    \"passwordConfirmation\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{diary_local_http}}/signup",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"accessToken\", jsonData.accessToken);\r",
+									"pm.environment.set(\"refreshToken\", jsonData.refreshToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"username\": \"{{username}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{diary_local_http}}/signin",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const newAccessToken = responseHeaders['x-access-token'];\r",
+									"if(newAccessToken){\r",
+									"    console.log('Set new access token');\r",
+									"    pm.environment.set(\"accessToken\", newAccessToken);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "key",
+								"value": "x-refresh",
+								"type": "text"
+							},
+							{
+								"key": "value",
+								"value": "{{refreshToken}}",
+								"type": "text"
+							},
+							{
+								"key": "type",
+								"value": "text",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{diary_local_http}}/logout",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "key",
+								"value": "x-refresh",
+								"type": "text"
+							},
+							{
+								"key": "value",
+								"value": "{{refreshToken}}",
+								"type": "text"
+							},
+							{
+								"key": "type",
+								"value": "text",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{diary_local_http}}/curUser",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"curUser"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Notes",
+			"item": [
+				{
+					"name": "Create Note",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"note_id\", jsonData.noteId);\r",
+									"const newAccessToken = responseHeaders['x-access-token'];\r",
+									"if (newAccessToken) {\r",
+									"    console.log('Set new newAccessToken');\r",
+									"    pm.environment.set(\"accessToken\", newAccessToken);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "key",
+								"value": "x-refresh",
+								"type": "text"
+							},
+							{
+								"key": "value",
+								"value": "{{refreshToken}}",
+								"type": "text"
+							},
+							{
+								"key": "type",
+								"value": "text",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Test123Title\",\r\n    \"content\": \"Test Conteosadsadsadasdadadssadadsadasdads\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{diary_local_http}}/notes/create",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"notes",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Note By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{diary_local_http}}/notes/{{note_id}}",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"notes",
+								"{{note_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All User notes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Note",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const newAccessToken = responseHeaders['x-access-token'];\r",
+									"if(newAccessToken){\r",
+									"    console.log('Set new access token');\r",
+									"    pm.environment.set(\"accessToken\", newAccessToken);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "key",
+								"value": "x-refresh",
+								"type": "text"
+							},
+							{
+								"key": "value",
+								"value": "{{refreshToken}}",
+								"type": "text"
+							},
+							{
+								"key": "type",
+								"value": "text",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{diary_local_http}}/notes/remove/{{note_id}}",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"notes",
+								"remove",
+								"{{note_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Note",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "key",
+								"value": "x-refresh",
+								"type": "text"
+							},
+							{
+								"key": "value",
+								"value": "{{refreshToken}}",
+								"type": "text"
+							},
+							{
+								"key": "type",
+								"value": "text",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"UpdatedTile\",\r\n    \"content\": \"Updated Content xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{diary_local_http}}/notes/edit/{{note_id}}",
+							"host": [
+								"{{diary_local_http}}"
+							],
+							"path": [
+								"notes",
+								"edit",
+								"{{note_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
