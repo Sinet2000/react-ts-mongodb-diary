@@ -1,11 +1,21 @@
 import axios, { AxiosResponse } from "axios";
+import { authAPI } from ".";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8585/api",
+  baseURL: "http://localhost:5858/api",
   headers: {
     "Content-type": " application/json",
   },
 });
+
+instance.interceptors.request.use(
+  config => {
+    const token = authAPI.getUserToken();
+    config.headers['Authorization'] = token;
+    return config;
+  },
+  error => Promise.reject(error)
+);
 
 const responseBody = (response: AxiosResponse) => response.data;
 

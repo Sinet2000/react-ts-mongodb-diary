@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createSignUpSchema, SignUpInput } from "../services/schemas/signUpSchema";
-import { signUp } from "../services/auth";
+import { createSignUpSchema, SignUpInput } from "../api/schemas/signUpSchema";
+import { authAPI } from "../api";
 import { useHistory } from "react-router-dom";
 
 const RegisterPage = () => {
@@ -18,7 +18,7 @@ const RegisterPage = () => {
 
   async function onSubmit(values: SignUpInput) {
     try {
-      await signUp(values);
+      await authAPI.signUp(values);
       history.push("/")
     } catch (e: any) {
       setRegisterError(e.message);
@@ -53,6 +53,7 @@ const RegisterPage = () => {
                     <i className="fas fa-user"></i>
                   </span>
                 </div>
+                <p>{errors.username?.message}</p>
               </div>
 
               <div className="field">
@@ -69,6 +70,7 @@ const RegisterPage = () => {
                     <i className="fas fa-envelope"></i>
                   </span>
                 </div>
+                <p>{errors.email?.message}</p>
               </div>
 
               <div className="field">
@@ -85,6 +87,7 @@ const RegisterPage = () => {
                     <i className="fas fa-lock"></i>
                   </span>
                 </div>
+                <p>{errors.password?.message}</p>
               </div>
 
               <div className="field">
@@ -101,6 +104,7 @@ const RegisterPage = () => {
                     <i className="fas fa-lock"></i>
                   </span>
                 </div>
+                <p>{errors.passwordConfirmation?.message}</p>
               </div>
 
               <div className="field">
@@ -115,58 +119,6 @@ const RegisterPage = () => {
         </div>
       </div>
     </div>
-  );
-
-  return (
-    <>
-      <p>{registerError}</p>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-element">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            placeholder="jane.doe@example.com"
-            {...register("email")}
-          />
-          <p>{errors.email?.message}</p>
-        </div>
-
-        <div className="form-element">
-          <label htmlFor="username">Username</label>
-          <input
-            id="name"
-            type="text"
-            placeholder="Jane Doe"
-            {...register("username")}
-          />
-          <p>{errors.username?.message}</p>
-        </div>
-
-        <div className="form-element">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            placeholder="*********"
-            {...register("password")}
-          />
-          <p>{errors.password?.message}</p>
-        </div>
-
-        <div className="form-element">
-          <label htmlFor="passwordConfirmation">Confirm password</label>
-          <input
-            id="passwordConfirmation"
-            type="password"
-            placeholder="*********"
-            {...register("passwordConfirmation")}
-          />
-          <p>{errors.passwordConfirmation?.message}</p>
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
-    </>
   );
 }
 

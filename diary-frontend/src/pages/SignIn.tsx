@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignInput, createLoginSchema } from "../services/schemas/loginSchema";
-import { signIn } from "../services/auth";
+import { SignInput, createLoginSchema } from "../api/schemas/loginSchema";
+import { authAPI } from "../api";
 
 const LoginPage = () => {
   const history = useHistory();
@@ -18,7 +18,7 @@ const LoginPage = () => {
   
   async function onSubmit(values: SignInput) {
     try{
-      await signIn(values);
+      await authAPI.signIn(values);
       history.push('/');
     } catch(e: any){
       setLoginError(e.message);

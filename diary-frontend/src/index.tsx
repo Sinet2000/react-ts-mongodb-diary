@@ -1,13 +1,13 @@
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 
-import App from "./App";
+import App from "./app/App";
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
-  <BrowserRouter>
+  <Router>
     <App />
-  </BrowserRouter>,
+  </Router>,
   document.getElementById("root")
 );
 
