@@ -3,25 +3,39 @@ import { authAPI } from ".";
 
 const instance = axios.create({
   baseURL: "http://localhost:5858/api",
-  headers: {
-    "Content-type": " application/json",
-  },
 });
 
 instance.interceptors.request.use(
   config => {
     const token = authAPI.getUserToken();
-    config.headers['Authorization'] = token;
+    if (token) {
+      config.headers.credentials = 'include';
+      config.headers.Authorization = `Bearer ${token}`;
+      config.headers['Access-Control-Allow-Origin'] = '*';
+      config.headers['Content-Type'] = 'application/json';
+    }
     return config;
-  },
-  error => Promise.reject(error)
+  },(error) => {
+    alert('interceptor request has error');
+    return Promise.reject(error);
+  }
 );
 
-const responseBody = (response: AxiosResponse) => response.data;
+instance.interceptors.response.use((response) => {
+  return response;
+}, (error) => {
+  if (error.response && error.response.data && error.response.data.error &&
+    (error.response.data.session === false || error.response.data.session === "false")) {
+      localStorage.removeItem("user");
+  } 
+  else if (error.response && error.response.data && error.response.data.error && error.response.data.error.message) {
+      console.log(error.response.data.error.message);
+  }
+  else
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("user"); // <-- add your var
+    } else
+      return Promise.reject(error);
+});
 
-export const requestManager = {
-  get: async (url: string, params: {}) => await instance.get(url, params).then(responseBody),
-  post: async (url: string, body: {}, withCredentials: boolean = false) => await instance.post(url, body, {withCredentials}).then(responseBody),
-  put: async (url: string, body: {}) => await instance.put(url, body).then(responseBody),
-  delete: async (url: string) => await instance.delete(url).then(responseBody),
-}
+export default instance;

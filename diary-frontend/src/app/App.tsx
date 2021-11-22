@@ -36,7 +36,7 @@ const App = () => {
           <Route exact path={Routes.Home} component={Home}/>
           <Route exact path={Routes.SignUp} component={SignUp}/>
           <Route exact path={Routes.SignIn}>
-            <SignIn />
+            <SignIn setCurrentUser={setCurrentUser}/>
           </Route>
           <Route path={Routes.Notes} component={AllNotes}/>
           <Route path={Routes.CreateNote} component={AddNote}/>

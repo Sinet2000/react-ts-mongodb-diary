@@ -1,22 +1,29 @@
-import { requestManager } from "./requestManager";
+import instance from "./requestManager";
 import { SignInput } from "./schemas/loginSchema";
 import { SignUpInput } from "./schemas/signUpSchema";
 import { IUser, ISession, IUserLocalData } from "../common/types";
 
 export const authAPI = {
   signIn: async(values: SignInput) => {
-    const response = await requestManager.post('/signin', values, true);
+    const response = await instance.post('/signin', values, {withCredentials: true});
 
-    if(response.data.accessToken) {
+    if (response.data.accessToken) {
       localStorage.setItem("user", JSON.stringify(response.data));
     }
 
-    return response.data;
+    return response;
   },
 
-  signUp: async (values: SignUpInput) => await requestManager.post('/signup', values),
-  logOut: () => localStorage.removeItem("user"),
-  getCurrentUser: (): IUserLocalData => JSON.parse(localStorage.getItem("user") || '{}'),
+  signUp: async (values: SignUpInput) => await instance.post('/signup', values),
+  logOut: async () => {
+    await instance.delete('/logout');
+    localStorage.removeItem("user")
+  },
+  getCurrentUser: (): IUserLocalData | null => {
+    var userData = JSON.parse(localStorage.getItem("user") || '{}');
+
+    return Object.keys(userData).length === 0 ? null : userData;
+  },
   getUserToken: (): string | null => {
     const user = authAPI.getCurrentUser();
 

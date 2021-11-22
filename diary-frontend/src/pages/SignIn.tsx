@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Routes } from "../app/routes";
 import { useHistory } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInput, createLoginSchema } from "../api/schemas/loginSchema";
 import { authAPI } from "../api";
+import { IUserLocalData } from "../common/types";
 
-const LoginPage = () => {
+type Props = {
+  setCurrentUser: (user: IUserLocalData | null) => void;
+}
+
+const LoginPage = ({ setCurrentUser }: Props) => {
   const history = useHistory();
   const [loginError, setLoginError] = useState(null);
   const {
@@ -19,7 +25,10 @@ const LoginPage = () => {
   async function onSubmit(values: SignInput) {
     try{
       await authAPI.signIn(values);
-      history.push('/');
+      const user = authAPI.getCurrentUser();
+      console.log(user);
+      setCurrentUser(user);
+      history.push(Routes.Notes);
     } catch(e: any){
       setLoginError(e.message);
     }

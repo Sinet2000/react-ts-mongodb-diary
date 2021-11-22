@@ -4,7 +4,7 @@ const requireUser = (req: Request, res: Response, next: NextFunction) => {
   const user = res.locals.user;
 
   if (!user) {
-    return res.sendStatus(403);
+    return res.status(401).send({ message: "Unauthorized!"});
   }
 
   return next();
